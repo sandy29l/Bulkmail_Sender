@@ -10,6 +10,7 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [showGuide, setShowGuide] = useState(false);
     const [error, seterror] = useState(false);
+    const [loading, setLoading] = useState(false);
     // const [loggedIn, setLoggedIn] = useState(false);
     const navigate = useNavigate();
 
@@ -27,39 +28,66 @@ export default function Login() {
         })
     }, [navigate])
 
-    function check(e) {
+    // function check(e) {
+    async function check(e) {
         e.preventDefault();
-        if (!gmail.endsWith("@gmail.com") || (password.length < 16)) {
+
+        if (!gmail.endsWith("@gmail.com") || password.length < 16) {
             seterror(true);
-            setGmail("")
-            setPassword("")
+            setGmail("");
+            setPassword("");
+            return;
         }
-        // setLoggedIn(true);
-        else {
-            axios.post("http://localhost:5000/login", { gmail: gmail, password: password }).then(function (data) {
-                console.log(data.data.message)
-                if (data.data.success) {
-                        signInWithEmailAndPassword(auth, gmail, password).then(() => {
-                            console.log("User registered");
-                            navigate("/bulkmail");
-                        }).catch((error)=>{
-                            createUserWithEmailAndPassword(auth, gmail, password).then(() => {
-                            console.log("new User Created");
-                            navigate("/bulkmail");
-                        })
-                        })
-                    
+
+        setLoading(true);
+
+        try {
+            const response = await axios.post(
+                "http://localhost:5000/login",
+                {
+                    gmail: gmail,
+                    password: password
                 }
-                else {
-                    alert("Gmail authentication failed:Enter Valid App password");
-                    setGmail("")
-                    setPassword("")
+            );
+
+            console.log(response.data.message);
+
+            if (response.data.success) {
+                try {
+                    await signInWithEmailAndPassword(auth, gmail, password);
+
+                    console.log("User logged in");
+                    navigate("/bulkmail");
+
+                } catch (firebaseError) {
+
+                    // If Firebase user doesn't exist, create one
+                    await createUserWithEmailAndPassword(
+                        auth,
+                        gmail,
+                        password
+                    );
+
+                    console.log("New User Created");
+                    navigate("/bulkmail");
                 }
-            })
+
+            } else {
+                alert("Gmail authentication failed: Enter Valid App Password");
+                setGmail("");
+                setPassword("");
+            }
+
+        } catch (error) {
+            console.log(error);
+            alert("Something went wrong. Please try again.");
+        } finally {
+            setLoading(false);
+        }
         }
 
 
-    }
+    // }
 
     // if (loggedIn) {
     //     axios.post("http://localhost:5000/login",{gmail:gmail,password:password}).then(function(data){
@@ -100,7 +128,7 @@ export default function Login() {
                             type="email"
                             placeholder="example@gmail.com"
                             value={gmail}
-                            onChange={(e) => {setGmail(e.target.value);seterror(false)}}
+                            onChange={(e) => { setGmail(e.target.value); seterror(false) }}
                             className={`w-full border ${!error ? "border-gray-300" : "border-red-600 border-2"} rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-black`}
                         />
                         {error ? <p className="text-red-600 text-sm font-semibold pl-2">Incorrect username</p> : null}
@@ -119,7 +147,7 @@ export default function Login() {
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Enter 16 character App Password"
                                 value={password}
-                                onChange={(e) => {setPassword(e.target.value);;seterror(false)}}
+                                onChange={(e) => { setPassword(e.target.value);; seterror(false) }}
                                 className={`w-full border ${!error ? "border-gray-300" : "border-red-600 border-2"} rounded-xl text-black px-4 py-3 pr-16 outline-none focus:ring-2 focus:ring-blue-500`}
                             />
 
@@ -154,9 +182,21 @@ export default function Login() {
                     <button
                         type="submit"
                         onClick={check}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition duration-300 shadow-lg"
+                        disabled={loading}
+                        className={`w-full text-white font-semibold py-3 rounded-xl transition-all duration-300 shadow-lg flex items-center justify-center gap-3
+        ${loading
+                                ? "bg-blue-400 cursor-not-allowed"
+                                : "bg-blue-600 hover:bg-blue-700 hover:scale-[1.02] active:scale-95"
+                            }`}
                     >
-                        Login
+                        {loading ? (
+                            <>
+                                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                Logging in...
+                            </>
+                        ) : (
+                            "Login"
+                        )}
                     </button>
 
                 </form>
