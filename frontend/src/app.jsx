@@ -65,7 +65,7 @@ function App() {
     function sendemail() {
         // console.log("sent")
         setsending(false);
-        axios.post("http://localhost:5000/send", { subject: sub, message: txt, emaillist: emaillist }).then(function (data) {
+        axios.post("https://bulkmail-sender-3.onrender.com/send", { subject: sub, message: txt, emaillist: emaillist }).then(function (data) {
             if (data.data === true) {
                 alert("Email was Sent Successfully.:)");
                 setsending(true);
