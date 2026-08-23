@@ -43,25 +43,38 @@ app.post("/login", async (req, res) => {
         });
         // res.send(true)
 
-    } catch (error) {
-        // console.log("Gmail authentication failed:", error.message);
+     }catch (error) {
+    console.log("========== GMAIL ERROR ==========");
+    console.log("code:", error.code);
+    console.log("command:", error.command);
+    console.log("response:", error.response);
+    console.log("message:", error.message);
+    console.log("=================================");
 
-        // // res.status(401).json({
-        // //     success: false,
-        // //     message: "Invalid Gmail or App Password"
-        // // });
-        // res.json({
-        //     success: false,
-        //     message: "Login failed"
-        // });
-        console.log("Gmail authentication failed:");
-        console.log(error);
+    res.status(401).json({
+        success: false,
+        message: error.message
+    });
+} 
+     //catch (error) {
+    //     // console.log("Gmail authentication failed:", error.message);
 
-        res.status(401).json({
-            success: false,
-            message: "error.message"
-        });
-    }
+    //     // // res.status(401).json({
+    //     // //     success: false,
+    //     // //     message: "Invalid Gmail or App Password"
+    //     // // });
+    //     // res.json({
+    //     //     success: false,
+    //     //     message: "Login failed"
+    //     // });
+    //     console.log("Gmail authentication failed:");
+    //     console.log(error);
+
+    //     res.status(401).json({
+    //         success: false,
+    //         message: "error.message"
+    //     });
+    // }
 });
 
 
