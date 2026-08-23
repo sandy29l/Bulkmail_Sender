@@ -17,19 +17,79 @@ let loggedInEmail = null;
 //         pass: "bfaj eely xlxr jgbg" "ieuu alvv scus hpqu",
 //     },
 // })
+// app.post("/login", async (req, res) => {
+//     const { gmail, password } = req.body;
+
+//     try {
+//         const transporter = nodemailer.createTransport({
+//             service: "gmail",
+//             auth: {
+//                 user: gmail,
+//                 pass: password
+//             }
+//         });
+
+//         // Verify Gmail credentials
+//         await transporter.verify();
+
+//         userTransporter = transporter;
+//         loggedInEmail = gmail;
+
+//         console.log("Gmail authentication successful");
+
+//         res.json({
+//             success: true,
+//             message: "Login successful"
+//         });
+//         // res.send(true)
+
+//      }catch (error) {
+//     console.log("========== GMAIL ERROR ==========");
+//     console.log("code:", error.code);
+//     console.log("command:", error.command);
+//     console.log("response:", error.response);
+//     console.log("message:", error.message);
+//     console.log("=================================");
+
+//     res.status(401).json({
+//         success: false,
+//         message: error.message
+//     });
+// } 
+//      //catch (error) {
+//     //     // console.log("Gmail authentication failed:", error.message);
+
+//     //     // // res.status(401).json({
+//     //     // //     success: false,
+//     //     // //     message: "Invalid Gmail or App Password"
+//     //     // // });
+//     //     // res.json({
+//     //     //     success: false,
+//     //     //     message: "Login failed"
+//     //     // });
+//     //     console.log("Gmail authentication failed:");
+//     //     console.log(error);
+
+//     //     res.status(401).json({
+//     //         success: false,
+//     //         message: "error.message"
+//     //     });
+//     // }
+// });
 app.post("/login", async (req, res) => {
     const { gmail, password } = req.body;
 
     try {
         const transporter = nodemailer.createTransport({
-            service: "gmail",
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
             auth: {
                 user: gmail,
                 pass: password
             }
         });
 
-        // Verify Gmail credentials
         await transporter.verify();
 
         userTransporter = transporter;
@@ -41,40 +101,20 @@ app.post("/login", async (req, res) => {
             success: true,
             message: "Login successful"
         });
-        // res.send(true)
 
-     }catch (error) {
-    console.log("========== GMAIL ERROR ==========");
-    console.log("code:", error.code);
-    console.log("command:", error.command);
-    console.log("response:", error.response);
-    console.log("message:", error.message);
-    console.log("=================================");
+    } catch (error) {
+        console.log("========== GMAIL ERROR ==========");
+        console.log("code:", error.code);
+        console.log("command:", error.command);
+        console.log("response:", error.response);
+        console.log("message:", error.message);
+        console.log("=================================");
 
-    res.status(401).json({
-        success: false,
-        message: error.message
-    });
-} 
-     //catch (error) {
-    //     // console.log("Gmail authentication failed:", error.message);
-
-    //     // // res.status(401).json({
-    //     // //     success: false,
-    //     // //     message: "Invalid Gmail or App Password"
-    //     // // });
-    //     // res.json({
-    //     //     success: false,
-    //     //     message: "Login failed"
-    //     // });
-    //     console.log("Gmail authentication failed:");
-    //     console.log(error);
-
-    //     res.status(401).json({
-    //         success: false,
-    //         message: "error.message"
-    //     });
-    // }
+        res.status(401).json({
+            success: false,
+            message: error.message
+        });
+    }
 });
 
 
