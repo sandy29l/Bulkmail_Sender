@@ -44,15 +44,22 @@ app.post("/login", async (req, res) => {
         // res.send(true)
 
     } catch (error) {
-        console.log("Gmail authentication failed:", error.message);
+        // console.log("Gmail authentication failed:", error.message);
 
-        // res.status(401).json({
+        // // res.status(401).json({
+        // //     success: false,
+        // //     message: "Invalid Gmail or App Password"
+        // // });
+        // res.json({
         //     success: false,
-        //     message: "Invalid Gmail or App Password"
+        //     message: "Login failed"
         // });
-        res.json({
+        console.log("Gmail authentication failed:");
+        console.log(error);
+
+        res.status(401).json({
             success: false,
-            message: "Login failed"
+            message: error.message
         });
     }
 });
