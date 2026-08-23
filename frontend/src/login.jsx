@@ -74,6 +74,7 @@ export default function Login() {
 
             } else {
                 alert("Gmail authentication failed: Enter Valid App Password");
+                console.log(response.data.message);
                 setGmail("");
                 setPassword("");
             }
