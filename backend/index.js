@@ -88,7 +88,10 @@ app.post("/login", async (req, res) => {
             auth: {
                 user: gmail,
                 pass: password
-            }
+            },
+            connectionTimeout: 30000,
+            greetingTimeout: 30000,
+            socketTimeout: 30000
         });
 
         await transporter.verify();
